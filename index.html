@@ -567,15 +567,15 @@ a{color:inherit; text-decoration:none;}
    ملاحظة: ضع رابط Google Apps Script (بعد نشره كـ Web App) هنا للمزامنة.
    بدون هذا الرابط يعمل التطبيق محلياً بالكامل عبر LocalStorage.
    ========================================================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxipMgXuMBDX31sPUC-7F7ufNUErticvNzewDplrYB7p7MU8CHG_wbKk09iu-G13Zg/exec"; // <-- رابط الـ Web App
+const SCRIPT_URL = ""; // يوضع هنا رابط Google Apps Script بعد النشر
 if(window.pdfjsLib){ pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"; }
 const SCHOOL_NAME = 'ابن خلدون الابتدائية وخزيمة بن ثابت المتوسطة';
 const SCHOOL_TYPE = 'طلاب';
 const SCHOOL_PRINCIPAL = 'الأستاذ صافي اللحياني';
 const ADMIN_USER = "admin";
 const ADMIN_PASS = "raya2026";
-const STORAGE_KEY = "raya_store_v1";
-const SESSION_KEY = "raya_session_v1";
+const STORAGE_KEY = "khuzaymah_attendance_store_v1";
+const SESSION_KEY = "khuzaymah_attendance_session_v1";
 
 /* ---------- state ---------- */
 let store = loadStore();
