@@ -673,7 +673,7 @@ async function pullFromServer(silent){
       const nextClasses = (data.classes||[]).map(c=>({id:String(c.id).trim(), number:c.number, name:c.name}));
       const nextStudents = (data.students||[]).map(s=>({id:String(s.id).trim(), classId:String(s.classId||'').trim(), number:numStr(s.number), name:s.name}));
       const nextStaff = (data.staff||[]).map(s=>({id:s.id, name:s.name, role:s.role, username:s.username, password:s.password, classes: typeof s.classes==='string' ? s.classes.split(',').filter(Boolean) : (s.classes||[])}));
-      // أسماء المعلمات السريعة (اختيارية) — إن كان الخادم لا يدعمها بعد، نُبقي القائمة المحلية كما هي.
+      // أسماء المعلمين السريعة (اختيارية) — إن كان الخادم لا يدعمها بعد، نُبقي القائمة المحلية كما هي.
       const nextTeacherNames = Array.isArray(data.teacherNames) ? data.teacherNames.filter(Boolean) : store.teacherNames;
       const map = {};
       (data.attendance||[]).forEach(r=>{
@@ -876,7 +876,7 @@ function renderTopnav(){
   links += `<a class="nav-btn ${route.name==='qr'?'active':''}" data-nav="qr">أكواد QR</a>`;
   links += `<a class="nav-btn ${route.name==='reports'?'active':''}" data-nav="reports">التقارير</a>`;
   if(session.type==='admin'){
-    links += `<a class="nav-btn ${route.name==='manage'?'active':''}" data-nav="manage">إدارة الفصول والطالبات</a>`;
+    links += `<a class="nav-btn ${route.name==='manage'?'active':''}" data-nav="manage">إدارة الفصول والطلاب</a>`;
     links += `<a class="nav-btn ${route.name==='staff'?'active':''}" data-nav="staff">الإداريات</a>`;
   }
   nav.innerHTML = `
@@ -950,7 +950,7 @@ function classCardHtml(c){
           <button class="cc-menu-btn" data-menu="${c.id}">⋮</button>
           <div class="cc-menu-list" id="menu-${c.id}">
             <button data-edit-class="${c.id}">تعديل الفصل</button>
-            <button data-manage-students="${c.id}">إدارة الطالبات</button>
+            <button data-manage-students="${c.id}">إدارة الطلاب</button>
             <button data-del-class="${c.id}">حذف الفصل</button>
           </div>
         </div>` : ''}
@@ -999,11 +999,11 @@ function viewDashboard(){
     </div>
     <div class="stats-grid">
       <div class="stat-card navy"><div class="num">${totalClasses}</div><div class="lbl">عدد الفصول</div></div>
-      <div class="stat-card"><div class="num">${totalStudents}</div><div class="lbl">عدد الطالبات الكلي</div></div>
+      <div class="stat-card"><div class="num">${totalStudents}</div><div class="lbl">عدد الطلاب الكلي</div></div>
       <div class="stat-card gold"><div class="num">${markedToday}</div><div class="lbl">المرصودات اليوم</div></div>
       <div class="stat-card danger"><div class="num">${absentToday}</div><div class="lbl">الغياب اليوم</div></div>
     </div>
-    <input class="searchbox" id="dashSearch" style="margin-bottom:16px; width:100%;" placeholder="🔍 ابحثي باسم الطالبة أو باسم/رقم الفصل..." value="${esc(dashboardQuery)}">
+    <input class="searchbox" id="dashSearch" style="margin-bottom:16px; width:100%;" placeholder="🔍 ابحثي باسم الطالب أو باسم/رقم الفصل..." value="${esc(dashboardQuery)}">
     <div class="classes-grid" id="classesGrid">
       ${cards || `<div class="empty" style="grid-column:1/-1"><b>${dashboardQuery? 'لا توجد نتائج مطابقة':'لا توجد فصول بعد'}</b>${dashboardQuery? 'جربي كلمة بحث أخرى' : (session.type==='admin' ? 'اضغطي "إضافة فصل" للبدء' : 'لم يتم إسناد فصول لك بعد')}</div>`}
     </div>
@@ -1105,7 +1105,7 @@ function openClassModal(existing){
   host.innerHTML = `
   <div class="overlay" id="ov">
     <div class="modal wide">
-      <div class="modal-head"><h3>${existing? 'تعديل فصل':'إضافة فصل جديد وإدارة الطالبات'}</h3><button class="modal-close" id="cl">✕</button></div>
+      <div class="modal-head"><h3>${existing? 'تعديل فصل':'إضافة فصل جديد وإدارة الطلاب'}</h3><button class="modal-close" id="cl">✕</button></div>
       <div class="modal-body">
         <div class="two-col">
           <div class="field"><label>رقم الفصل</label><input id="cNum" value="${existing? esc(existing.number):''}" placeholder="مثال: 1"></div>
@@ -1141,12 +1141,12 @@ function openClassModal(existing){
         ` : ''}
         ${!existing ? `
         <hr style="border:none; border-top:1px solid var(--line); margin:16px 0;">
-        <p style="font-weight:800; color:var(--navy); margin-bottom:12px;">إضافة الطالبات إلى الفصل (اختاري إحدى الطرق أو استخدميها معاً):</p>
+        <p style="font-weight:800; color:var(--navy); margin-bottom:12px;">إضافة الطلاب إلى الفصل (اختاري إحدى الطرق أو استخدميها معاً):</p>
 
         <div class="field">
           <label style="color:#5b7382;">1) إضافة اسم اسم</label>
           <div style="display:flex; gap:8px;">
-            <input id="singleStudentName" placeholder="اكتبي اسم الطالبة واضغطي إضافة">
+            <input id="singleStudentName" placeholder="اكتبي اسم الطالب واضغطي إضافة">
             <button class="btn btn-outline" id="btnAddSingle" style="flex-shrink:0;">إضافة</button>
           </div>
         </div>
@@ -1168,14 +1168,14 @@ function openClassModal(existing){
         </div>
 
         <div style="margin-top:16px;">
-          <p style="font-weight:800; color:var(--navy); margin-bottom:8px;">قائمة الطالبات المضافة (<span id="studentCount">0</span>)</p>
+          <p style="font-weight:800; color:var(--navy); margin-bottom:8px;">قائمة الطلاب المضافة (<span id="studentCount">0</span>)</p>
           <div id="tempStudentList" style="max-height:220px; overflow:auto;"></div>
         </div>
         ` : ''}
       </div>
       <div class="modal-foot">
         <button class="btn btn-outline" id="cancel">إلغاء</button>
-        <button class="btn btn-primary" id="save">${existing? 'حفظ' : 'حفظ الفصل والطالبات'}</button>
+        <button class="btn btn-primary" id="save">${existing? 'حفظ' : 'حفظ الفصل والطلاب'}</button>
       </div>
     </div>
   </div>`;
@@ -1201,11 +1201,11 @@ function openClassModal(existing){
         </div>`).join('') || `<div class="empty"><b>لا توجد طالبات مطابقة</b></div>`;
       document.querySelectorAll('[data-edit-student-inline]').forEach(b=> b.onclick = ()=> openStudentFormModal(existing.id, store.students.find(s=>s.id===b.dataset.editStudentInline), ()=> drawEditStudents(document.getElementById('editSearchS').value.trim())));
       document.querySelectorAll('[data-del-student-inline]').forEach(b=> b.onclick = async ()=>{
-        if(!confirm('حذف هذه الطالبة؟')) return;
+        if(!confirm('حذف هذه الطالب؟')) return;
         store.students = store.students.filter(s=>s.id!==b.dataset.delStudentInline); saveStore();
         await pushToServer('deleteStudent', {id:b.dataset.delStudentInline});
         drawEditStudents(document.getElementById('editSearchS').value.trim());
-        toast('تم حذف الطالبة');
+        toast('تم حذف الطالب');
       });
     };
     drawEditStudents();
@@ -1424,13 +1424,13 @@ function openClassModal(existing){
       store.students.push(...newStudents);
       saveStore();
       await pushToServer('saveClassWithStudents', { classObj, students: newStudents });
-      toast('تم حفظ الفصل والطالبات بنجاح');
+      toast('تم حفظ الفصل والطلاب بنجاح');
     }
     close(); render();
   };
 }
 
-/* ---------- إدارة الطالبات ---------- */
+/* ---------- إدارة الطلاب ---------- */
 function openStudentsModal(classId){
   const cls = store.classes.find(c=>c.id===classId);
   const host = document.getElementById('modalHost');
@@ -1469,7 +1469,7 @@ function openStudentsModal(classId){
     document.querySelectorAll('[data-move-student]').forEach(b=> b.onclick = ()=> openStudentFormModal(classId, store.students.find(s=>s.id===b.dataset.moveStudent), ()=>{ document.getElementById('studentsList').innerHTML = draw(); bindStudentRowEvents(); }));
     document.querySelectorAll('[data-edit-student]').forEach(b=> b.onclick = ()=> openStudentFormModal(classId, store.students.find(s=>s.id===b.dataset.editStudent), ()=>{ document.getElementById('studentsList').innerHTML = draw(); bindStudentRowEvents(); }));
     document.querySelectorAll('[data-del-student]').forEach(b=> b.onclick = async ()=>{
-      if(!confirm('حذف هذه الطالبة؟')) return;
+      if(!confirm('حذف هذه الطالب؟')) return;
       store.students = store.students.filter(s=>s.id!==b.dataset.delStudent); saveStore();
       await pushToServer('deleteStudent', {id:b.dataset.delStudent});
       document.getElementById('studentsList').innerHTML = draw(); bindStudentRowEvents();
@@ -1491,7 +1491,7 @@ function openStudentFormModal(classId, existing, onDone){
       <div class="modal-body">
         <div class="field"><label>الفصل</label><select id="sClass">${classOptions}</select></div>
         <div class="two-col">
-          <div class="field"><label>رقم الطالبة</label><input id="sNum" value="${existing?esc(existing.number):''}"></div>
+          <div class="field"><label>رقم الطالب</label><input id="sNum" value="${existing?esc(existing.number):''}"></div>
           <div class="field"><label>الاسم الكامل</label><input id="sName" value="${existing?esc(existing.name):''}"></div>
         </div>
       </div>
@@ -1507,16 +1507,16 @@ function openStudentFormModal(classId, existing, onDone){
     const name = wrap.querySelector('#sName').value.trim();
     const number = wrap.querySelector('#sNum').value.trim();
     const clsId = wrap.querySelector('#sClass').value;
-    if(!name){ toast('أدخلي اسم الطالبة', true); return; }
+    if(!name){ toast('أدخلي اسم الطالب', true); return; }
     if(existing){
       existing.name=name; existing.number=number; existing.classId=clsId;
       saveStore(); await pushToServer('saveStudent', existing);
-      toast('تم تحديث بيانات الطالبة');
+      toast('تم تحديث بيانات الطالب');
     }else{
       const st = { id: uid(), classId: clsId, number, name };
       store.students.push(st); saveStore();
       await pushToServer('saveStudent', st);
-      toast('تمت إضافة الطالبة');
+      toast('تمت إضافة الطالب');
     }
     close(); onDone && onDone(); renderTopnav();
   };
@@ -1539,12 +1539,12 @@ function viewScan(classId){
       <h2>رصد غياب فصل ${esc(cls.name)}</h2><p>${esc(SCHOOL_NAME)} — ${todayDateHtml()}</p>
       <div class="teacher-field">
         <select id="teacherSelectList">
-          <option value="">اختيار اسم المعلمة من القائمة</option>
+          <option value="">اختيار اسم المعلم من القائمة</option>
           ${names.map(n=>`<option value="${esc(n)}" ${n===def?'selected':''}>${esc(n)}</option>`).join('')}
         </select>
-        <input id="teacherSelect" placeholder="أو اكتبي اسم المعلمة مباشرة" value="${esc(def)}" autocomplete="off" style="margin-top:8px;">
+        <input id="teacherSelect" placeholder="أو اكتبي اسم المعلم مباشرة" value="${esc(def)}" autocomplete="off" style="margin-top:8px;">
       </div>
-      <p style="font-size:.72rem;color:#cfe0e8;margin-top:6px;">اختاري اسم المعلمة من القائمة أو اكتبيه مباشرة</p>
+      <p style="font-size:.72rem;color:#cfe0e8;margin-top:6px;">اختاري اسم المعلم من القائمة أو اكتبيه مباشرة</p>
     </div>
     <div class="scan-class-card">
       <div class="scan-class-main">
@@ -1560,7 +1560,7 @@ function viewScan(classId){
         <span>📌 رصد هذا الفصل</span>
       </div>
     </div>
-    ${students.length?`<div class="field" style="margin:16px 0 0;"><label>البحث باسم الطالبة</label><input id="studentSearchInput" placeholder="اكتبي جزءاً من اسم الطالبة للبحث..." autocomplete="off"></div>`:''}
+    ${students.length?`<div class="field" style="margin:16px 0 0;"><label>البحث باسم الطالب</label><input id="studentSearchInput" placeholder="اكتبي جزءاً من اسم الطالب للبحث..." autocomplete="off"></div>`:''}
     <div id="studentsList">${students.length?students.map(s=>`<div class="student-item" data-id="${s.id}" data-student-name="${esc(s.name.toLowerCase())}"><div class="s-info"><div class="s-num">${esc(s.number)}</div><div class="s-name">${esc(s.name)}</div></div><button class="absent-toggle" data-toggle="${s.id}"></button></div>`).join(''):'<div class="empty"><b>لا توجد طالبات في هذا الفصل بعد</b></div>'}</div>
     ${students.length?'<div class="scan-submit-bar"><button class="btn btn-primary" id="finishScan">✅ إنهاء الرصد</button></div>':''}
   </div>`;
@@ -1580,7 +1580,7 @@ function viewScanConfirm(cls, att){
         <div class="cn"><b>${present}</b>حاضرة</div>
         <div class="cn absent"><b>${absentees.length}</b>غائبة</div>
       </div>
-      ${absentees.length ? `<ul class="absent-names">${absentees.map(a=>`<li>${esc(a.studentName)}</li>`).join('')}</ul>` : `<p style="color:var(--success); font-weight:700;">جميع الطالبات حاضرات 🎉</p>`}
+      ${absentees.length ? `<ul class="absent-names">${absentees.map(a=>`<li>${esc(a.studentName)}</li>`).join('')}</ul>` : `<p style="color:var(--success); font-weight:700;">جميع الطلاب حاضرات 🎉</p>`}
       <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
         <button class="btn btn-outline" id="editScanBtn">تعديل الرصد</button>
         ${session ? `<button class="btn btn-primary" onclick="navigate('dashboard')">لوحة التحكم</button>` : ''}
@@ -1627,7 +1627,7 @@ function bindScan(){
   bindEditBtn();
 }
 async function addTeacherNameQuick(){
-  const name = (prompt('اكتبي اسم المعلمة لإضافته إلى القائمة:')||'').trim();
+  const name = (prompt('اكتبي اسم المعلم لإضافته إلى القائمة:')||'').trim();
   if(!name) return;
   if(!store.teacherNames) store.teacherNames = [];
   if(!store.teacherNames.includes(name)){
@@ -1636,7 +1636,7 @@ async function addTeacherNameQuick(){
     await pushToServer('saveTeacherName', {name});
   }
   // نحدّث القائمة المنسدلة وحقل الإدخال مباشرة دون إعادة رسم الصفحة
-  // حتى لا تُفقد حالة الطالبات المحددات كغائبات أثناء الرصد.
+  // حتى لا تُفقد حالة الطلاب المحددات كغائبات أثناء الرصد.
   const list = document.getElementById('teacherSelectList');
   if(list && !Array.from(list.options).some(o=>o.value===name)){
     const opt = document.createElement('option'); opt.value = name; list.appendChild(opt);
@@ -1644,7 +1644,7 @@ async function addTeacherNameQuick(){
   const input = document.getElementById('teacherSelect');
   if(input) input.value = name;
   if(list) list.value = name;
-  toast(`تمت إضافة "${name}" إلى قائمة المعلمات`);
+  toast(`تمت إضافة "${name}" إلى قائمة المعلمين`);
 }
 function bindEditBtn(){
   const editBtn = document.getElementById('editScanBtn');
@@ -1672,7 +1672,7 @@ function speakThanks(teacher, absentCount){
     const greeting = (teacher && teacher!=='غير محدد') ? `شكراً لك ${teacher}، ` : 'شكراً لك، ';
     const msg = absentCount>0
       ? `${greeting}تم رصد الغياب بنجاح. عدد الغائبات ${absentCount}.`
-      : `${greeting}تم رصد الحضور. جميع الطالبات حاضرات.`;
+      : `${greeting}تم رصد الحضور. جميع الطلاب حاضرات.`;
     const utter = new SpeechSynthesisUtterance(msg);
     utter.lang = 'ar-SA';
     speechSynthesis.cancel();
@@ -1786,7 +1786,7 @@ function viewStaff(){
   return `
   <div class="container">
     <div class="page-title">
-      <div><h2>إدارة الإداريات والمعلمات</h2><p>إضافة حسابات وإسناد الفصول لكل إدارية</p></div>
+      <div><h2>إدارة الإداريات والمعلمين</h2><p>إضافة حسابات وإسناد الفصول لكل إدارية</p></div>
       <button class="btn btn-gold" id="addStaffBtn">+ إضافة إدارية</button>
     </div>
     <div id="staffList">
@@ -1804,10 +1804,10 @@ function viewStaff(){
     </div>
 
     <div class="page-title" style="margin-top:34px;">
-      <div><h2>أسماء المعلمات لصفحة الرصد</h2><p>أسماء بسيطة (بدون حساب دخول) تظهر كاقتراحات عند رصد الغياب</p></div>
+      <div><h2>أسماء المعلمين لصفحة الرصد</h2><p>أسماء بسيطة (بدون حساب دخول) تظهر كاقتراحات عند رصد الغياب</p></div>
     </div>
     <div class="field" style="max-width:420px; display:flex; gap:8px; align-items:flex-end;">
-      <div style="flex:1;"><label>اسم المعلمة</label><input id="quickTeacherName" placeholder="اكتبي الاسم ثم اضغطي إضافة"></div>
+      <div style="flex:1;"><label>اسم المعلم</label><input id="quickTeacherName" placeholder="اكتبي الاسم ثم اضغطي إضافة"></div>
       <button class="btn btn-primary" id="addQuickTeacherBtn">+ إضافة</button>
     </div>
     <div class="chip-list" id="teacherNamesChips" style="margin-top:12px;">
@@ -1839,7 +1839,7 @@ function bindStaff(){
   if(quickInput) quickInput.addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); addQuickName(); } });
   document.querySelectorAll('[data-teacher-name]').forEach(chip=> chip.onclick = async ()=>{
     const name = chip.dataset.teacherName;
-    if(!confirm(`حذف "${name}" من قائمة أسماء المعلمات؟`)) return;
+    if(!confirm(`حذف "${name}" من قائمة أسماء المعلمين؟`)) return;
     store.teacherNames = (store.teacherNames||[]).filter(n=>n!==name); saveStore();
     await pushToServer('deleteTeacherName', {name});
     render();
@@ -1902,7 +1902,7 @@ function openStaffModal(existing){
 
 
 /* ==========================================================================
-   إدارة الفصول والطالبات — صفحة مستقلة
+   إدارة الفصول والطلاب — صفحة مستقلة
    ========================================================================== */
 function viewManage(){
   const classes = visibleClasses();
@@ -1911,7 +1911,7 @@ function viewManage(){
   const students = cls ? studentsOfClass(cls.id).sort(byNumber) : [];
   return `<div class="container">
     <div class="page-title">
-      <div><h2>إدارة الفصول والطالبات</h2><p>إضافة وحذف وتعديل الطالبات والفصول بالسحب والإفلات أو النسخ واللصق</p></div>
+      <div><h2>إدارة الفصول والطلاب</h2><p>إضافة وحذف وتعديل الطلاب والفصول بالسحب والإفلات أو النسخ واللصق</p></div>
       <button class="btn btn-gold" id="manageAddClass">+ إضافة فصل</button>
     </div>
     <div class="manage-grid">
@@ -1950,7 +1950,7 @@ function viewManage(){
         <div id="manageStudentList" style="max-height:440px;overflow:auto;margin-top:14px">
           ${students.map((s,i)=>`<div class="list-row manage-student-row" data-student-row="${esc(s.id)}">
             <label style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer"><input type="checkbox" class="manage-student-check" value="${esc(s.id)}"><span class="info"><b>${esc(s.name)}</b><span>رقم ${esc(s.number||i+1)}</span></span></label>
-            <div class="row-actions"><button class="icon-btn" data-manage-student-move="${esc(s.id)}" title="نقل الطالبة إلى فصل آخر">↔</button><button class="icon-btn" data-manage-student-edit="${esc(s.id)}">✎</button><button class="icon-btn del" data-manage-student-delete="${esc(s.id)}">🗑</button></div>
+            <div class="row-actions"><button class="icon-btn" data-manage-student-move="${esc(s.id)}" title="نقل الطالب إلى فصل آخر">↔</button><button class="icon-btn" data-manage-student-edit="${esc(s.id)}">✎</button><button class="icon-btn del" data-manage-student-delete="${esc(s.id)}">🗑</button></div>
           </div>`).join('') || '<div class="empty"><b>لا توجد طالبات في هذا الفصل</b></div>'}
         </div>
         ` : '<div class="empty"><b>اختاري فصلاً</b><p>أضيفي فصلاً أولاً للبدء.</p></div>'}
@@ -1968,17 +1968,17 @@ function bindManage(){
   document.querySelectorAll('[data-manage-student-move]').forEach(b=>b.onclick=()=>openStudentFormModal(route.manageClassId,store.students.find(s=>s.id===b.dataset.manageStudentMove),()=>render()));
   document.querySelectorAll('[data-manage-student-edit]').forEach(b=>b.onclick=()=>openStudentFormModal(route.manageClassId,store.students.find(s=>s.id===b.dataset.manageStudentEdit),()=>render()));
   document.querySelectorAll('[data-manage-student-delete]').forEach(b=>b.onclick=async()=>{
-    if(!confirm('حذف هذه الطالبة؟'))return;
-    const id=b.dataset.manageStudentDelete; store.students=store.students.filter(s=>s.id!==id); saveStore(); await pushToServer('deleteStudent',{id}); render(); toast('تم حذف الطالبة');
+    if(!confirm('حذف هذه الطالب؟'))return;
+    const id=b.dataset.manageStudentDelete; store.students=store.students.filter(s=>s.id!==id); saveStore(); await pushToServer('deleteStudent',{id}); render(); toast('تم حذف الطالب');
   });
   document.getElementById('manageSelectAll')?.addEventListener('click',()=>document.querySelectorAll('.manage-student-check').forEach(x=>x.checked=true));
   document.getElementById('manageDeleteSelected')?.addEventListener('click',async()=>{
     const ids=[...document.querySelectorAll('.manage-student-check:checked')].map(x=>x.value);
-    if(!ids.length){toast('حددي الطالبات أولاً',true);return}
+    if(!ids.length){toast('حددي الطلاب أولاً',true);return}
     if(!confirm(`حذف ${ids.length} طالبة؟`))return;
     store.students=store.students.filter(s=>!ids.includes(s.id)); saveStore();
     for(const id of ids) await pushToServer('deleteStudent',{id});
-    render(); toast('تم حذف الطالبات المحددة');
+    render(); toast('تم حذف الطلاب المحددة');
   });
   document.getElementById('manageAddStudent')?.addEventListener('click',()=>openStudentFormModal(route.manageClassId,null,()=>render()));
   const addNames=async(names)=>{
@@ -2068,7 +2068,7 @@ function reportTeacherStats(sessions){
   return Object.values(map).sort((a,b)=>b.sessions-a.sessions || b.days.size-a.days.size || a.name.localeCompare(b.name,'ar'));
 }
 function teacherDashboardHtml(teachers){
-  if(!teachers.length) return '<div class="teacher-dashboard"><div class="teacher-dashboard-head"><div><h3>👩‍🏫 لوحة المعلمات الأكثر رصدًا</h3><p>ستظهر الإحصاءات بعد تسجيل عمليات الرصد</p></div><div class="teacher-heart">💗 💗</div></div></div>';
+  if(!teachers.length) return '<div class="teacher-dashboard"><div class="teacher-dashboard-head"><div><h3>👩‍🏫 لوحة المعلمين الالأكثر رصدًا</h3><p>ستظهر الإحصاءات بعد تسجيل عمليات الرصد</p></div><div class="teacher-heart">💗 💗</div></div></div>';
   const max=Math.max(1,teachers[0].sessions);
   const cards=teachers.slice(0,6).map((t,i)=>{
     const initials=esc((t.name||'م').trim().slice(0,1));
@@ -2076,8 +2076,8 @@ function teacherDashboardHtml(teachers){
     return '<div class="teacher-card"><div class="teacher-avatar">👩🏻‍🏫</div><div><div class="teacher-name" title="'+esc(t.name)+'">'+esc(t.name)+'</div><div class="teacher-count">'+t.sessions+'</div><div class="teacher-count-label">عملية رصد · '+t.days.size+' يوم</div></div><div class="teacher-rank">'+(i<3?['🥇','🥈','🥉'][i]:'#'+(i+1))+'</div><div class="teacher-bar"><span style="width:'+width+'%"></span></div></div>';
   }).join('');
   const total=teachers.reduce((n,t)=>n+t.sessions,0);
-  const phrase=total>=10?'جهود رائعة 🌷 كل عملية رصد تصنع فرقًا وتدعم انتظام الطالبات.':total>=5?'شكرًا لعطائكن 💗 المتابعة المستمرة تصنع أثرًا جميلًا.':'بداية جميلة 💕 ومع كل رصد نقترب أكثر من متابعة أفضل.';
-  return '<div class="teacher-dashboard"><div class="teacher-dashboard-head"><div><h3>👩‍🏫 لوحة المعلمات الأكثر رصدًا</h3><p>حسب عدد عمليات الرصد في الفترة المحددة · أعلى 6 معلمات</p></div><div class="teacher-heart">💗 💗 💗</div></div><div class="teacher-grid">'+cards+'</div><div class="motivation-card">✨ '+phrase+' ✨</div></div>';
+  const phrase=total>=10?'جهود رائعة 🌷 كل عملية رصد تصنع فرقًا وتدعم انتظام الطلاب.':total>=5?'شكرًا لعطائكن 💗 المتابعة المستمرة تصنع أثرًا جميلًا.':'بداية جميلة 💕 ومع كل رصد نقترب أكثر من متابعة أفضل.';
+  return '<div class="teacher-dashboard"><div class="teacher-dashboard-head"><div><h3>👩‍🏫 لوحة المعلمين الالأكثر رصدًا</h3><p>حسب عدد عمليات الرصد في الفترة المحددة · أعلى 6 معلمات</p></div><div class="teacher-heart">💗 💗 💗</div></div><div class="teacher-grid">'+cards+'</div><div class="motivation-card">✨ '+phrase+' ✨</div></div>';
 }
 
 function reportData(type, anchor, classId){
@@ -2147,12 +2147,12 @@ function renderReportPreview(){
     
     
     <div class="class-summary-card"><div class="class-summary-head"><div><h3>📊 ملخص الفصول</h3><p>نظرة سريعة على الرصد والحضور والغياب ونسبة الحضور لكل فصل</p></div><div style="font-size:1.05rem;">💚 📚</div></div><div class="class-summary-wrap"><table class="class-summary-table"><thead><tr><th>الفصل</th><th>أيام الرصد</th><th>حضور</th><th>غياب</th><th>نسبة الحضور</th></tr></thead><tbody>${classRows||'<tr><td colspan="5" style="text-align:center;color:#8299a6;padding:20px;">لا توجد بيانات رصد في الفترة المحددة</td></tr>'}</tbody></table></div></div>
-    <div class="student-report-section"><div class="student-report-head"><h3>تفصيل الطالبات</h3><span>ملخص حضور وغياب الطالبات</span></div><div class="student-report-table-wrap"><table class="student-report-table"><thead><tr><th>#</th><th>اسم الطالبة</th><th>الفصل</th><th>أيام الرصد</th><th>حضور</th><th>غياب</th></tr></thead><tbody>${d.byStudent.slice().sort((a,b)=>a.name.localeCompare(b.name,'ar')).map((x,i)=>`<tr><td>${i+1}</td><td class="student-name-cell"><button type="button" class="student-profile-link" data-open-student-profile="${esc(x.studentId||"")}">${esc(x.name)}</button></td><td>${esc((store.classes.find(c=>c.id===x.classId)||{}).name||'')}</td><td>${x.days}</td><td><span class="status-pill present-pill">${x.present}</span></td><td><span class="status-pill absent-pill">${x.absent}</span></td></tr>`).join('')||'<tr><td colspan="6">لا توجد بيانات</td></tr>'}</tbody></table></div></div>
+    <div class="student-report-section"><div class="student-report-head"><h3>تفصيل الطلاب</h3><span>ملخص حضور وغياب الطلاب</span></div><div class="student-report-table-wrap"><table class="student-report-table"><thead><tr><th>#</th><th>اسم الطالب</th><th>الفصل</th><th>أيام الرصد</th><th>حضور</th><th>غياب</th></tr></thead><tbody>${d.byStudent.slice().sort((a,b)=>a.name.localeCompare(b.name,'ar')).map((x,i)=>`<tr><td>${i+1}</td><td class="student-name-cell"><button type="button" class="student-profile-link" data-open-student-profile="${esc(x.studentId||"")}">${esc(x.name)}</button></td><td>${esc((store.classes.find(c=>c.id===x.classId)||{}).name||'')}</td><td>${x.days}</td><td><span class="status-pill present-pill">${x.present}</span></td><td><span class="status-pill absent-pill">${x.absent}</span></td></tr>`).join('')||'<tr><td colspan="6">لا توجد بيانات</td></tr>'}</tbody></table></div></div>
   </div>`;
 }
 function openStudentProfileById(studentId){
   const st=store.students.find(s=>s.id===studentId);
-  if(!st){ toast('تعذّر العثور على بيانات الطالبة',true); return; }
+  if(!st){ toast('تعذّر العثور على بيانات الطالب',true); return; }
   const cls=store.classes.find(c=>c.id===st.classId);
   const records=[];
   (store.attendance||[]).filter(a=>a.classId===st.classId).forEach(a=>{
@@ -2162,7 +2162,7 @@ function openStudentProfileById(studentId){
   const present=records.filter(r=>r.status==='حاضر').length, absent=records.filter(r=>r.status==='غائب').length;
   const rate=records.length?Math.round(present/records.length*100):0;
   const host=document.getElementById('modalHost')||(()=>{const d=document.createElement('div');d.id='modalHost';document.body.appendChild(d);return d;})();
-  host.innerHTML='<div class="overlay student-profile-modal" id="studentProfileOv"><div class="modal wide"><div class="modal-head"><h3>👩‍🎓 ملف الطالبة: '+esc(st.name)+'</h3><button class="modal-close" id="studentProfileClose">✕</button></div><div class="modal-body"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px"><b style="color:var(--navy)">الفصل: '+esc(cls?cls.name:'—')+'</b><span style="color:#64748b;font-size:.78rem">رقم الطالبة: '+esc(st.number||'—')+'</span></div><div class="student-profile-grid"><div class="student-profile-stat"><b>'+records.length+'</b><span>أيام الرصد</span></div><div class="student-profile-stat"><b>'+present+'</b><span>حضور</span></div><div class="student-profile-stat"><b style="color:var(--danger)">'+absent+'</b><span>غياب</span></div><div class="student-profile-stat"><b>'+rate+'%</b><span>نسبة الحضور</span></div></div><h4 style="color:var(--navy);margin:8px 0 10px">📅 سجل الحضور والغياب</h4><div class="student-profile-history">'+(records.map(r=>'<div class="student-profile-history-row"><span>'+formatDateAr(r.date)+(r.time?' · '+esc(r.time):'')+' · '+esc(r.teacher)+'</span><span class="'+(r.status==='غائب'?'abs':'pres')+'">'+esc(r.status)+'</span></div>').join('')||'<div class="empty">لا يوجد سجل حضور أو غياب</div>')+'</div></div></div></div>';
+  host.innerHTML='<div class="overlay student-profile-modal" id="studentProfileOv"><div class="modal wide"><div class="modal-head"><h3>👩‍🎓 ملف الطالب: '+esc(st.name)+'</h3><button class="modal-close" id="studentProfileClose">✕</button></div><div class="modal-body"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px"><b style="color:var(--navy)">الفصل: '+esc(cls?cls.name:'—')+'</b><span style="color:#64748b;font-size:.78rem">رقم الطالب: '+esc(st.number||'—')+'</span></div><div class="student-profile-grid"><div class="student-profile-stat"><b>'+records.length+'</b><span>أيام الرصد</span></div><div class="student-profile-stat"><b>'+present+'</b><span>حضور</span></div><div class="student-profile-stat"><b style="color:var(--danger)">'+absent+'</b><span>غياب</span></div><div class="student-profile-stat"><b>'+rate+'%</b><span>نسبة الحضور</span></div></div><h4 style="color:var(--navy);margin:8px 0 10px">📅 سجل الحضور والغياب</h4><div class="student-profile-history">'+(records.map(r=>'<div class="student-profile-history-row"><span>'+formatDateAr(r.date)+(r.time?' · '+esc(r.time):'')+' · '+esc(r.teacher)+'</span><span class="'+(r.status==='غائب'?'abs':'pres')+'">'+esc(r.status)+'</span></div>').join('')||'<div class="empty">لا يوجد سجل حضور أو غياب</div>')+'</div></div></div></div>';
   const close=()=>host.innerHTML=''; document.getElementById('studentProfileClose').onclick=close; document.getElementById('studentProfileOv').onclick=e=>{if(e.target.id==='studentProfileOv')close();};
 }
 
@@ -2181,7 +2181,7 @@ function reportPrintHtml(type,anchor,classId){
   const classRows=d.byClass.map(x=>`<tr><td>${esc(x.className)}</td><td>${x.days.size}</td><td>${x.present}</td><td>${x.absent}</td><td>${x.present+x.absent?Math.round(x.present/(x.present+x.absent)*100):0}%</td></tr>`).join('');
   const teacherRows=teachers.slice(0,6).map((t,i)=>`<tr><td>${i+1}</td><td>${esc(t.name)}</td><td>${t.sessions}</td><td>${t.days.size}</td><td>${t.classes.size}</td></tr>`).join('');
   const studentRows=d.byStudent.sort((a,b)=>b.absent-a.absent).map(x=>`<tr><td>${esc(x.name)}</td><td>${esc((store.classes.find(c=>c.id===x.classId)||{}).name||'')}</td><td>${x.days}</td><td>${x.present}</td><td>${x.absent}</td></tr>`).join('');
-  return `<div style="font-family:'Cairo',Arial,sans-serif;direction:rtl;padding:18px;color:#102a43"><div style="display:flex;align-items:center;gap:18px;border-bottom:3px solid #102a43;padding-bottom:14px"><img src="school-logo.svg" style="width:85px;height:85px;object-fit:contain"><div></div></div><div style="display:flex;gap:12px;margin:18px 0"><div style="border:1px solid #ddd;background:#ecfdf5;padding:10px;flex:1;text-align:center"><b>${d.sessions.length}</b><br>أيام رصد</div><div style="border:1px solid #ddd;background:#eff6ff;padding:10px;flex:1;text-align:center"><b>${totalPresent}</b><br>حالات حضور</div><div style="border:1px solid #ddd;background:#fff7ed;padding:10px;flex:1;text-align:center"><b>${totalAbsent}</b><br>حالات غياب</div></div><div style="margin:18px 0;padding:14px;border:1px solid #f1d8df;background:linear-gradient(135deg,#fff7ed,#fdf2f8);border-radius:14px"><h3 style="margin:0 0 10px;color:#7c2d5a">👩‍🏫 المعلمات الأكثر رصدًا 💗</h3><table style="width:100%;border-collapse:collapse" border="1" cellpadding="7"><thead><tr><th>#</th><th>المعلمة</th><th>عمليات الرصد</th><th>أيام الرصد</th><th>الفصول</th></tr></thead><tbody>${teacherRows||'<tr><td colspan="5">لا توجد بيانات</td></tr>'}</tbody></table><div style="text-align:center;margin-top:10px;color:#7c2d5a;font-weight:800">💗 شكرًا لكل معلمة تسهم بمتابعتها في انتظام الطالبات 💗</div></div><h3>ملخص الفصول</h3><table style="width:100%;border-collapse:collapse" border="1" cellpadding="7"><thead><tr><th>الفصل</th><th>أيام الرصد</th><th>حضور</th><th>غياب</th><th>نسبة الحضور</th></tr></thead><tbody>${classRows||'<tr><td colspan="5">لا توجد بيانات</td></tr>'}</tbody></table><h3 style="margin-top:24px">تفصيل الطالبات</h3><table style="width:100%;border-collapse:collapse" border="1" cellpadding="7"><thead><tr><th>الطالبة</th><th>الفصل</th><th>أيام الرصد</th><th>حضور</th><th>غياب</th></tr></thead><tbody>${studentRows||'<tr><td colspan="5">لا توجد بيانات</td></tr>'}</tbody></table><div style="margin-top:24px;color:#64748b;font-size:11px">تم إصدار التقرير من منصة راية لرصد الغياب</div></div>`;
+  return `<div style="font-family:'Cairo',Arial,sans-serif;direction:rtl;padding:18px;color:#102a43"><div style="display:flex;align-items:center;gap:18px;border-bottom:3px solid #102a43;padding-bottom:14px"><img src="school-logo.svg" style="width:85px;height:85px;object-fit:contain"><div></div></div><div style="display:flex;gap:12px;margin:18px 0"><div style="border:1px solid #ddd;background:#ecfdf5;padding:10px;flex:1;text-align:center"><b>${d.sessions.length}</b><br>أيام رصد</div><div style="border:1px solid #ddd;background:#eff6ff;padding:10px;flex:1;text-align:center"><b>${totalPresent}</b><br>حالات حضور</div><div style="border:1px solid #ddd;background:#fff7ed;padding:10px;flex:1;text-align:center"><b>${totalAbsent}</b><br>حالات غياب</div></div><div style="margin:18px 0;padding:14px;border:1px solid #f1d8df;background:linear-gradient(135deg,#fff7ed,#fdf2f8);border-radius:14px"><h3 style="margin:0 0 10px;color:#7c2d5a">👩‍🏫 المعلمين الالأكثر رصدًا 💗</h3><table style="width:100%;border-collapse:collapse" border="1" cellpadding="7"><thead><tr><th>#</th><th>المعلم</th><th>عمليات الرصد</th><th>أيام الرصد</th><th>الفصول</th></tr></thead><tbody>${teacherRows||'<tr><td colspan="5">لا توجد بيانات</td></tr>'}</tbody></table><div style="text-align:center;margin-top:10px;color:#7c2d5a;font-weight:800">💗 شكرًا لكل معلمة تسهم بمتابعتها في انتظام الطلاب 💗</div></div><h3>ملخص الفصول</h3><table style="width:100%;border-collapse:collapse" border="1" cellpadding="7"><thead><tr><th>الفصل</th><th>أيام الرصد</th><th>حضور</th><th>غياب</th><th>نسبة الحضور</th></tr></thead><tbody>${classRows||'<tr><td colspan="5">لا توجد بيانات</td></tr>'}</tbody></table><h3 style="margin-top:24px">تفصيل الطلاب</h3><table style="width:100%;border-collapse:collapse" border="1" cellpadding="7"><thead><tr><th>الطالب</th><th>الفصل</th><th>أيام الرصد</th><th>حضور</th><th>غياب</th></tr></thead><tbody>${studentRows||'<tr><td colspan="5">لا توجد بيانات</td></tr>'}</tbody></table><div style="margin-top:24px;color:#64748b;font-size:11px">تم إصدار التقرير من منصة راية لرصد الغياب</div></div>`;
 }
 function exportPeriodPDF(){
   renderReportPreview();
@@ -2199,14 +2199,14 @@ function exportPeriodPDF(){
     const students=d.byStudent.slice().sort((a,b)=>a.name.localeCompare(b.name,'ar'));
     const rows=students.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.name)}</td><td>${esc((store.classes.find(c=>c.id===x.classId)||{}).name||'')}</td><td>${x.days}</td><td>${x.present}</td><td style="color:#dc2626;font-weight:800">${x.absent}</td></tr>`).join('')||'<tr><td colspan="6">لا توجد بيانات</td></tr>';
     let classHighlight='<span class="pdf-class-name">جميع الفصول</span>'; if(classId){ const cls=store.classes.find(c=>c.id===classId); if(cls){ classHighlight='<span class="pdf-class-number">رقم الفصل: '+esc(cls.number||'')+'</span><span class="pdf-class-name">الفصل: '+esc(cls.name)+'</span>'; } }
-    p.innerHTML=`<div class="pdf-cover"><div class="pdf-main-header"><img src="school-logo.svg" class="pdf-main-logo"><div><div class="pdf-school">${esc(SCHOOL_NAME)}</div><h1>تقرير غياب يومي - أسبوعي - شهري</h1><div class="pdf-period">من ${formatDateAr(d.from)} إلى ${formatDateAr(d.to)}</div></div></div><div class="pdf-class-highlight">${classHighlight}</div><div class="pdf-summary"><div><b>${students.length}</b><span>عدد الطالبات</span></div><div><b>${totalP}</b><span>حضور</span></div><div><b>${totalA}</b><span>غياب</span></div></div><h2>أسماء الطالبات</h2><table class="pdf-students-table"><thead><tr><th>#</th><th>اسم الطالبة</th><th>الفصل</th><th>أيام الرصد</th><th>حضور</th><th>غياب</th></tr></thead><tbody>${rows}</tbody></table></div><div class="pdf-charts-page">${original}</div>`;
+    p.innerHTML=`<div class="pdf-cover"><div class="pdf-main-header"><img src="school-logo.svg" class="pdf-main-logo"><div><div class="pdf-school">${esc(SCHOOL_NAME)}</div><div style="font-size:12px;font-weight:700;color:#64748b;margin-top:3px;">النوع: ${esc(SCHOOL_TYPE)} — المدير: ${esc(SCHOOL_PRINCIPAL)}</div><h1>تقرير غياب يومي - أسبوعي - شهري</h1><div class="pdf-period">من ${formatDateAr(d.from)} إلى ${formatDateAr(d.to)}</div></div></div><div class="pdf-class-highlight">${classHighlight}</div><div class="pdf-summary"><div><b>${students.length}</b><span>عدد الطلاب</span></div><div><b>${totalP}</b><span>حضور</span></div><div><b>${totalA}</b><span>غياب</span></div></div><h2>أسماء الطلاب</h2><table class="pdf-students-table"><thead><tr><th>#</th><th>اسم الطالب</th><th>الفصل</th><th>أيام الرصد</th><th>حضور</th><th>غياب</th></tr></thead><tbody>${rows}</tbody></table></div><div class="pdf-charts-page">${original}</div>`;
     window.print();
     setTimeout(()=>{p.innerHTML=original;},500);
   },120);
 }
 function exportPeriodExcel(){
   const type=document.getElementById('reportType').value, anchor=document.getElementById('reportDate').value||todayStr(), classId=document.getElementById('reportClass').value, d=reportData(type,anchor,classId);
-  const rows=d.byStudent.map(x=>({'الطالبة':x.name,'الفصل':(store.classes.find(c=>c.id===x.classId)||{}).name||'','أيام الرصد':x.days,'حضور':x.present,'غياب':x.absent}));
+  const rows=d.byStudent.map(x=>({'الطالب':x.name,'الفصل':(store.classes.find(c=>c.id===x.classId)||{}).name||'','أيام الرصد':x.days,'حضور':x.present,'غياب':x.absent}));
   const ws=XLSX.utils.json_to_sheet(rows), wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'التقرير'); XLSX.writeFile(wb,`تقرير_غياب_${d.label}_${d.from}_${d.to}.xlsx`);
 }
 
@@ -2220,10 +2220,10 @@ function exportClassExcel(classId){
   const rows = students.map(s=>{
     const rec = att ? att.records.find(r=>r.studentId===s.id) : null;
     return {
-      'رقم الطالبة': s.number,
-      'اسم الطالبة': s.name,
+      'رقم الطالب': s.number,
+      'اسم الطالب': s.name,
       'الحالة': rec ? rec.status : 'لم يُرصد',
-      'المعلمة': att ? att.teacher : '',
+      'المعلم': att ? att.teacher : '',
       'وقت الرصد': att ? att.time : '',
       'التاريخ': todayStr()
     };
@@ -2246,9 +2246,9 @@ function exportClassPDF(classId){
   const html = `
   <div style="font-family:'Cairo',sans-serif; direction:rtl; padding:10px;">
     <h2 style="color:#102a43;">تقرير غياب — ${esc(cls.name)}</h2>
-    <p style="color:#555; font-size:13px;">${esc(SCHOOL_NAME)} — التاريخ: ${todayDateHtml()} ${att? '— المعلمة: '+esc(att.teacher)+' — الساعة: '+esc(att.time):''}</p>
+    <p style="color:#555; font-size:13px;">${esc(SCHOOL_NAME)} — التاريخ: ${todayDateHtml()} ${att? '— المعلم: '+esc(att.teacher)+' — الساعة: '+esc(att.time):''}</p>
     <table style="width:100%; border-collapse:collapse; margin-top:14px;" border="1" cellpadding="8">
-      <thead style="background:#102a43; color:#fff;"><tr><th>رقم الطالبة</th><th>اسم الطالبة</th><th>الحالة</th></tr></thead>
+      <thead style="background:#102a43; color:#fff;"><tr><th>رقم الطالب</th><th>اسم الطالب</th><th>الحالة</th></tr></thead>
       <tbody>${rowsHtml}</tbody>
     </table>
   </div>`;
